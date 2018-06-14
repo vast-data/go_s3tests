@@ -7,73 +7,61 @@ that exposes an S3-like API.
 
 The tests only cover the REST interface.
 
-### Setup
 
-The tests use the [GO amazon SDK](). The tests use the testing built in Go Package and an assertion toolkit testify.To get started, ensure you have the [Golang Environment setup]((https://golang.org/doc/install); e.g. on Debian/Ubuntu::
-
-Ubuntu
-
-	sudo apt-get install golang 
-
-Fedora
-
-	dnf install golang-gopkg-yaml-devel-v2
-
-
-### Running the Tests
+### Download and setup the tests
 
 Clone the repository
 
 	git clone https://github.com/nanjekyejoannah/go_s3tests
 	cd go_s3tests
+	./bootstrap.sh
 
 ### Configuration
 
 Copy the sample configuration.
 
-	cp config.toml.sample config.toml
+	cp config.yaml.sample config.yaml
 
-Edit the config.toml.sample file to your needs. You can also decide to make the config file a yaml or json. Just give it config.yaml or config.json for yaml and json respectively. 
+Edit the config.yaml.sample file to your needs.  
 
 The config file should look  like this:
 
 	
-	[DEFAULT]
+	DEFAULT :
 
-	host = "s3.amazonaws.com"
-	port = "8080"
-	is_secure = "yes"
+    		host : s3.amazonaws.com
+    		port : 8080
+    		is_secure : yes
 
-	[fixtures]
+	fixtures :
+    		bucket_prefix : yournamehere-
 
-	bucket_prefix = "joannah"
+	s3main :
+    		access_key : 0555b35654ad1656d804
+    		access_secret : h7GhxuBLTrlhVUyxSPUKUV8r/2EI4ngqJxD7iBdBYLhwluN30JaT3Q==
+    		bucket : bucket1
+    		region : us-east-1
+    		endpoint : localhost:8000
+    		host : localhost
+    		port : 8000
+    		display_name :
+    		email : tester@gmail.com
+    		is_secure : false
+    		SSE : AES256
+    		kmskeyid : barbican_key_id
 
-	[s3main]
+	s3alt :
+    		access_key : NOPQRSTUVWXYZABCDEFG
+    		access_secret : nopqrstuvwxyzabcdefghijklmnabcdefghijklm
+    		bucket : bucket1
+    		region : us-east-1
+    		endpoint : localhost:8000
+    		display_name :
+    		email : johndoe@gmail.com
+    		SSE : your SSE
+    		kmskeyid : barbican_key_id
+    		is_secure : false
 
-	access_key = "0555b35654ad1656d804"
-	access_secret = "h7GhxuBLTrlhVUyxSPUKUV8r/2EI4ngqJxD7iBdBYLhwluN30JaT3Q=="
-	bucket = "bucket1"
-	region = "mexico"
-	endpoint = "localhost:8000" #depending on how you are connecting to RGW
-	display_name = ""
-	email = "someone@gmail.com"
-	is_secure = false  #true to enable SSL
-	SSE = "AES256"
-	kmskeyid = "barbican_key_id"
-
-
-	[s3alt]
-
-	access_key = "0555b35654ad1656d804"
-	access_secret = "h7GhxuBLTrlhVUyxSPUKUV8r/2EI4ngqJxD7iBdBYLhwluN30JaT3Q=="
-	bucket = "bucket1"
-	region = "mexico"
-	endpoint = "localhost:8000"
-	display_name = ""
-	email = "someone@gmail.com"
-	SSE = ""AES256""
-	kmskeyid = "barbican_key_id"
-	is_secure = false  #true to enable SSL
 
 ### RGW
 

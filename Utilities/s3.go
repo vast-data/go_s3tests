@@ -23,12 +23,14 @@ import (
 
 func LoadConfig() error {
 
-	viper.SetConfigName("config")  
-  	viper.AddConfigPath("../")
+	viper.SetConfigType("yaml")
+	viper.AddConfigPath("../")
+	viper.SetConfigName("config")
 
   	err := viper.ReadInConfig() 
   	if err != nil {
-    	fmt.Println("Config file not found...")
+		fmt.Println(err)
+		fmt.Println("Config file not found...")
   	}
 
   	return err
