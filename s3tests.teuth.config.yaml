@@ -4,26 +4,26 @@ DEFAULT :
     is_secure : 
 
 fixtures :
-    bucket_prefix : test-adam
+    bucket_prefix : s3test-go-
 
 s3main :
-    access_key : 0555b35654ad1656d804
-    access_secret : h7GhxuBLTrlhVUyxSPUKUV8r/2EI4ngqJxD7iBdBYLhwluN30JaT3Q==
+    access_key : 
+    access_secret : 
     bucket : bucket1
     region : us-east-1
     display_name :
     email : 
-    is_secure : false
-    SSE : AES256
-    kmskeyid : barbican_key_id
+    is_secure : 
+    SSE : aws:kms
+    kmskeyid : testkey-1
 
 s3alt :
-    access_key : NOPQRSTUVWXYZABCDEFG
-    access_secret : nopqrstuvwxyzabcdefghijklmnabcdefghijklm
+    access_key : 
+    access_secret : 
     bucket : bucket1
     region : us-east-1
     display_name :
     email : 
-    SSE : your SSE
-    kmskeyid : barbican_key_id
-    is_secure : false
+    SSE : aws:kms
+    kmskeyid : testkey-1
+    is_secure : 

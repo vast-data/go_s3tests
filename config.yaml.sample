@@ -1,10 +1,10 @@
 DEFAULT :
     host : s3.amazonaws.com 
     port : 8080
-    is_secure : yes
+    is_secure : true
 
 fixtures :
-    bucket_prefix : yournamehere- 
+    bucket_prefix : test- 
 
 s3main :
     access_key : 0555b35654ad1656d804
@@ -15,10 +15,10 @@ s3main :
     host : localhost
     port : 8000
     display_name :
-    email : tester@gmail.com
+    email : tester@test.com
     is_secure : false
-    SSE : AES256
-    kmskeyid : barbican_key_id
+    SSE : aws:kms
+    kmskeyid : testkey-1
 
 s3alt :
     access_key : NOPQRSTUVWXYZABCDEFG
@@ -27,7 +27,7 @@ s3alt :
     region : us-east-1
     endpoint : localhost:8000
     display_name :
-    email : johndoe@gmail.com
-    SSE : your SSE
-    kmskeyid : barbican_key_id
+    email : johndoe@test.com
+    SSE : aws:kms
+    kmskeyid : testkey-1
     is_secure : false
