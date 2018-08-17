@@ -1,0 +1,33 @@
+DEFAULT :
+    host : s3.amazonaws.com 
+    port : 8080
+    is_secure : true
+
+fixtures :
+    bucket_prefix : test- 
+
+s3main :
+    access_key : 0555b35654ad1656d804
+    access_secret : h7GhxuBLTrlhVUyxSPUKUV8r/2EI4ngqJxD7iBdBYLhwluN30JaT3Q==
+    bucket : bucket1
+    region : us-east-1
+    endpoint : localhost:8000
+    host : localhost
+    port : 8000
+    display_name :
+    email : tester@test.com
+    is_secure : false
+    SSE : aws:kms
+    kmskeyid : testkey-1
+
+s3alt :
+    access_key : NOPQRSTUVWXYZABCDEFG
+    access_secret : nopqrstuvwxyzabcdefghijklmnabcdefghijklm
+    bucket : bucket1
+    region : us-east-1
+    endpoint : localhost:8000
+    display_name :
+    email : johndoe@test.com
+    SSE : aws:kms
+    kmskeyid : testkey-1
+    is_secure : false

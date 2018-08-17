@@ -1,0 +1,29 @@
+DEFAULT :
+    host : 
+    port : 
+    is_secure : 
+
+fixtures :
+    bucket_prefix : s3test-go-
+
+s3main :
+    access_key : 
+    access_secret : 
+    bucket : bucket1
+    region : us-east-1
+    display_name :
+    email : 
+    is_secure : 
+    SSE : aws:kms
+    kmskeyid : testkey-1
+
+s3alt :
+    access_key : 
+    access_secret : 
+    bucket : bucket1
+    region : us-east-1
+    display_name :
+    email : 
+    SSE : aws:kms
+    kmskeyid : testkey-1
+    is_secure : 

@@ -23,12 +23,14 @@ import (
 
 func LoadConfig() error {
 
-	viper.SetConfigName("config")  
-  	viper.AddConfigPath("../")
+	viper.SetConfigType("yaml")
+	viper.AddConfigPath("../")
+	viper.SetConfigName("config")
 
   	err := viper.ReadInConfig() 
   	if err != nil {
-    	fmt.Println("Config file not found...")
+		fmt.Println(err)
+		fmt.Println("Config file not found...")
   	}
 
   	return err
@@ -36,11 +38,15 @@ func LoadConfig() error {
 
 var err = LoadConfig()
 
+const (
+	localCertFile = "/home/mu3e/Software/ceph-master/build/cert.pem"
+)
+
 var Creds = credentials.NewStaticCredentials(viper.GetString("s3main.access_key"), viper.GetString("s3main.access_secret"), "")
 
 var cfg = aws.NewConfig().WithRegion(viper.GetString("s3main.region")).
 	WithEndpoint(viper.GetString("s3main.endpoint")).
-	WithDisableSSL(true).
+	WithDisableSSL(!viper.GetBool("s3main.is_secure")).
 	WithLogLevel(3).
 	WithS3ForcePathStyle(true).
 	WithCredentials(Creds)
@@ -89,7 +95,7 @@ func CreateBucket(svc *s3.S3, bucket string) error {
 	return err
 }
 
-func PutObjectToBucket(svc *s3.S3, bucket string, key string, content string) error { //deprecated
+func PutObjectToBucket(svc *s3.S3, bucket string, key string, content string) error {
 
 	_, err := svc.PutObject(&s3.PutObjectInput{
 		Body:   strings.NewReader(content),
@@ -100,7 +106,7 @@ func PutObjectToBucket(svc *s3.S3, bucket string, key string, content string) er
 	return err
 }
 
-func CreateObjects(svc *s3.S3, bucket string, objects map[string]string) error { // for this
+func CreateObjects(svc *s3.S3, bucket string, objects map[string]string) error {
 
 	for key, content := range objects {
 
@@ -450,11 +456,12 @@ func SSEKMSCustomerWrite(svc *s3.S3, filesize int) (string, string, error) {
 	data :=  strings.Repeat("A", filesize)
 	key := "testobj"
 	bucket := GetBucketName()
-	sse := viper.GetString("s3main.SSE")
+	sse := "aws:kms"
+	kmskeyid := viper.GetString("s3main.kmskeyid")
 
 	err := CreateBucket(svc, bucket)
 
-	err = WriteSSEKMS(svc, bucket, key, data, sse)
+	err = WriteSSEKMSkeyId(svc, bucket, key, data, sse, kmskeyid)
 
 	rdata, _ := GetObject(svc, bucket, key)
 
@@ -462,7 +469,7 @@ func SSEKMSCustomerWrite(svc *s3.S3, filesize int) (string, string, error) {
 }
 
 
-func WriteSSECEcrypted(svc *s3.S3, bucket string, key string, content string, sse []string) error { //deprecated
+func WriteSSECEcrypted(svc *s3.S3, bucket string, key string, content string, sse []string) error {
 
 	_, err := svc.PutObject(&s3.PutObjectInput{
 		Body:   strings.NewReader(content),
@@ -508,7 +515,7 @@ func ReadSSECEcrypted(svc *s3.S3, bucket string, key string, sse []string) (stri
 	return resp, errr
 }
 
-func WriteSSEKMS(svc *s3.S3, bucket string, key string, content string, sse string) error { //deprecated
+func WriteSSEKMS(svc *s3.S3, bucket string, key string, content string, sse string) error {
 
 	_, err := svc.PutObject(&s3.PutObjectInput{
 		Body:   strings.NewReader(content),
@@ -520,7 +527,7 @@ func WriteSSEKMS(svc *s3.S3, bucket string, key string, content string, sse stri
 	return err
 }
 
-func WriteSSEKMSkeyId(svc *s3.S3, bucket string, key string, content string, sse string, kmskeyid string) error { //deprecated
+func WriteSSEKMSkeyId(svc *s3.S3, bucket string, key string, content string, sse string, kmskeyid string) error {
 
 	_, err := svc.PutObject(&s3.PutObjectInput{
 		Body:   strings.NewReader(content),
@@ -551,7 +558,7 @@ func GetSetMetadata (metadata map[string]*string) map[string]*string {
 func GetObjectWithIfMatch(svc *s3.S3, bucket string, key string, condition string) (string, error) {
 
 	results, err := svc.GetObject(&s3.GetObjectInput{Bucket: aws.String(bucket), Key: aws.String(key), IfMatch: aws.String(condition)})
-
+	
 	var resp string
 	var errr error
 
@@ -570,7 +577,6 @@ func GetObjectWithIfMatch(svc *s3.S3, bucket string, key string, condition strin
 
 		resp, errr = "", err
 	}
-
 	return resp, errr
 }
 
@@ -622,7 +628,6 @@ func GetObjectWithIfModifiedSince(svc *s3.S3, bucket string, key string, time ti
 
 		resp, errr = "", err
 	}
-
 	return resp, errr
 }
 
@@ -648,7 +653,6 @@ func GetObjectWithIfUnModifiedSince(svc *s3.S3, bucket string, key string, time 
 
 		resp, errr = "", err
 	}
-
 	return resp, errr
 }
 
@@ -853,8 +857,9 @@ func SetLifecycle(svc *s3.S3, bucket , id , status, md5 string) (*s3.PutBucketLi
 	    },
 	}
 	req, resp := svc.PutBucketLifecycleConfigurationRequest(input)
-	req.HTTPRequest.Header.Set("Content-Md5", string(md5))
 
+	req.HTTPRequest.Header.Set("Content-Md5", string(md5))
+	
 	err := req.Send()
 
 	return resp, err
@@ -888,7 +893,11 @@ func SetACL (svc *s3.S3, bucket string, acl string)(*s3.PutBucketAclOutput, erro
 
 func SetupRequest(serviceName, region, body string) (*http.Request, io.ReadSeeker) {
 
-	endpoint := "https://" + serviceName + "." + region + "." + viper.GetString("s3main.endpoint")
+	var proto string = "http://"
+	if viper.GetBool("s3main.is_secure") {
+		proto = "https://"
+	}
+	endpoint := proto + serviceName + "." + region + "." + viper.GetString("s3main.endpoint")
 	reader := strings.NewReader(body)
 	req, _ := http.NewRequest("POST", endpoint, reader)
 	req.Header.Add("X-Amz-Target", "prefix.Operation")

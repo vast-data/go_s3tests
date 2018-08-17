@@ -278,26 +278,26 @@ func (suite *S3Suite) TestRangedRequestSkipLeadingBytes() {
 
 }
 
-// func (suite *S3Suite) TestRangedRequestReturnTrailingBytes() {
+func (suite *S3Suite) TestRangedRequestReturnTrailingBytes() {
 
-// 	//getting objects in a range should return correct data
+	//getting objects in a range should return correct data
 
-	// assert := suite
-// 	bucket := GetBucketName()
-// 	key := "key"
-// 	content := "testcontent"
+	assert := suite
+	bucket := GetBucketName()
+	key := "key"
+	content := "testcontent"
 
-// 	var data string
-// 	var resp *s3.GetObjectOutput
+	var data string
+	var resp *s3.GetObjectOutput
 
-// 	err := CreateBucket(svc, bucket)
-// 	PutObjectToBucket(svc, bucket, key, content)
+	err := CreateBucket(svc, bucket)
+	PutObjectToBucket(svc, bucket, key, content)
 
-// 	resp, data, err = GetObjectWithRange(svc, bucket, key, "bytes=-8")
-// 	assert.Nil(err)
-// 	assert.Equal(data, content[3:11])
-// 	assert.Equal(*resp.AcceptRanges, "bytes")
-// }
+	resp, data, err = GetObjectWithRange(svc, bucket, key, "bytes=-8")
+	assert.Nil(err)
+	assert.Equal(data, content[3:11])
+	assert.Equal(*resp.AcceptRanges, "bytes")
+}
 
 func (suite *S3Suite) TestRangedRequestInvalidRange() {
 
@@ -676,6 +676,7 @@ func (suite *S3Suite) TestSSEKMSbarbTransfer13B() {
 	assert := suite
 
 	rdata, data, err := SSEKMSkeyIdCustomerWrite(svc, 13)
+	
 	if awsErr, ok := err.(awserr.Error); ok {
 
 		assert.NotNil(awsErr)
@@ -700,6 +701,7 @@ func (suite *S3Suite) TestSSEKMSbarbTransfer1MB() {
 	assert := suite
 
 	rdata, data, err := SSEKMSkeyIdCustomerWrite(svc, 1024*1024)
+	
 	if awsErr, ok := err.(awserr.Error); ok {
 
 		assert.NotNil(awsErr)
@@ -724,7 +726,7 @@ func (suite *S3Suite) TestSSEKMSbarbTransfer1KB() {
 	assert := suite
 
 	rdata, data, err := SSEKMSkeyIdCustomerWrite(svc, 1024)
-
+	
 	if awsErr, ok := err.(awserr.Error); ok {
 
 		assert.NotNil(awsErr)
@@ -748,6 +750,7 @@ func (suite *S3Suite) TestSSEKMSbarbTransfer1B() {
 	assert := suite
 
 	rdata, data, err := SSEKMSkeyIdCustomerWrite(svc, 1)
+	
 	if awsErr, ok := err.(awserr.Error); ok {
 
 		assert.NotNil(awsErr)
@@ -772,6 +775,7 @@ func (suite *S3Suite) TestSSEKMSTransfer13B() {
 	assert := suite
 
 	rdata, data, err := SSEKMSCustomerWrite(svc, 13)
+	
 	if awsErr, ok := err.(awserr.Error); ok {
 
 		assert.NotNil(awsErr)
@@ -795,6 +799,7 @@ func (suite *S3Suite) TestSSEKMSTransfer1MB() {
 	assert := suite
 
 	rdata, data, err := SSEKMSCustomerWrite(svc, 1024*1024)
+	
 	if awsErr, ok := err.(awserr.Error); ok {
 
 		assert.NotNil(awsErr)
@@ -818,12 +823,12 @@ func (suite *S3Suite) TestSSEKMSTransfer1KB() {
 	assert := suite
 
 	rdata, data, err := SSEKMSCustomerWrite(svc, 1024)
+	
 	if awsErr, ok := err.(awserr.Error); ok {
 
 		assert.NotNil(awsErr)
 
 	} else {
-
 		assert.Nil(err)
 		assert.Equal(rdata, data)
 
@@ -842,8 +847,7 @@ func (suite *S3Suite) TestSSEKMSTransfer1B() {
 	assert := suite
 
 	rdata, data, err := SSEKMSCustomerWrite(svc, 1)
-	rdata, data, err = SSEKMSCustomerWrite(svc, 1024)
-
+	
 	if awsErr, ok := err.(awserr.Error); ok {
 
 		assert.NotNil(awsErr)
@@ -872,7 +876,7 @@ func (suite *S3Suite) TestSSEKMSPresent() {
 	err := CreateBucket(svc, bucket)
 
 	err = WriteSSEKMSkeyId(svc, bucket, "kay1", "test", viper.GetString("s3main.SSE"), viper.GetString("s3main.kmskeyid"))
-
+	
 	if awsErr, ok := err.(awserr.Error); ok {
 
 		assert.NotNil(awsErr)
@@ -902,10 +906,10 @@ func (suite *S3Suite) TestSSEKMSNoKey() {
 	err := CreateBucket(svc, bucket)
 
 	err = WriteSSEKMSkeyId(svc, bucket, "kay1", "test", viper.GetString("s3main.SSE"), "")
+	
 	if awsErr, ok := err.(awserr.Error); ok {
-
 		assert.NotNil(awsErr)
-
+		assert.Equal("InvalidAccessKeyId", awsErr.Code())
 	} else {
 
 		assert.NotNil(err)
@@ -918,7 +922,7 @@ func (suite *S3Suite) TestSSEKMSNotDeclared() {
 	/*
 		Resource : object, method: put
 		Scenario : dDo not declare SSE-KMS but provide key_id
-		Assertion: sucessful not encryption.
+		Assertion: fails if either the aws:kms or key_id is not declared
 	*/
 
 	assert := suite
@@ -928,20 +932,15 @@ func (suite *S3Suite) TestSSEKMSNotDeclared() {
 	err := CreateBucket(svc, bucket)
 
 	err = WriteSSEKMSkeyId(svc, bucket, "kay1", "test", "", viper.GetString("s3main.kmskeyid"))
-	err = WriteSSEKMSkeyId(svc, bucket, "kay1", "test", viper.GetString("s3main.SSE"), "")
-
 	if awsErr, ok := err.(awserr.Error); ok {
-
+		
 		assert.NotNil(awsErr)
-
-	} else {
-
-		assert.Nil(err)
-		data, _ := GetObject(svc, bucket, "kay1")
-
-		assert.Equal("test", data)
 	}
-
+	err = WriteSSEKMSkeyId(svc, bucket, "kay1", "test", viper.GetString("s3main.SSE"), "")
+	if awsErr, ok := err.(awserr.Error); ok {
+		
+		assert.NotNil(awsErr)
+	} 
 }
 
 //...................................... get object with conditions....................
@@ -987,9 +986,7 @@ func (suite *S3Suite) TestGetObjectIfmatchFailed() {
 	assert.NotNil(err)
 	if err != nil {
 		if awsErr, ok := err.(awserr.Error); ok {
-
 			assert.Equal(awsErr.Code(), "PreconditionFailed")
-			assert.Equal(awsErr.Code(), "")
 		}
 	}
 
@@ -1055,6 +1052,7 @@ func (suite *S3Suite) TestGetObjectIfModifiedSinceGood() {
 	bucket := GetBucketName()
 	objects := map[string]string{"foo": "bar"}
 	now := time.Now()
+	time.Sleep(1 * time.Second)
 
 	err := CreateBucket(svc, bucket)
 	err = CreateObjects(svc, bucket, objects)
@@ -1077,6 +1075,7 @@ func (suite *S3Suite) TestGetObjectIfUnModifiedSinceGood() {
 	bucket := GetBucketName()
 	objects := map[string]string{"foo": "bar"}
 	now := time.Now()
+	time.Sleep(1 * time.Second)
 
 	err := CreateBucket(svc, bucket)
 	err = CreateObjects(svc, bucket, objects)
@@ -1456,37 +1455,40 @@ func (suite *S3Suite) TestMultipartUploadInvalidPart() {
 	}
 }
 
-func (suite *S3Suite) TestMultipartUploadNoSuchUpload() {
+// func (suite *S3Suite) TestMultipartUploadNoSuchUpload() {
+// 	/*
+// 		Resource : object, method: get
+// 		Scenario : check failure on multiple multi-part upload with invalid upload id
+// 		Assertion: fails.
+// 	*/
+// 	assert := suite
+// 	bucket := GetBucketName()
+// 	num_parts := 2
 
-	/*
-		Resource : object, method: get
-		Scenario : check failure on multiple multi-part upload with invalid upload id
-		Assertion: fails.
-	*/
-	assert := suite
-	bucket := GetBucketName()
-	num_parts := 2
+// 	payload := strings.Repeat("12345", 1024*1024)
+// 	key_name := "mymultipart"
 
-	payload := strings.Repeat("12345", 1024*1024)
-	key_name := "mymultipart"
+// 	err := CreateBucket(svc, bucket)
 
-	err := CreateBucket(svc, bucket)
+// 	result, err := InitiateMultipartUpload(svc, bucket, key_name)
+// 	fmt.Println("Result: ", result)
 
-	result, err := InitiateMultipartUpload(svc, bucket, key_name)
+// 	resp, err := Uploadpart(svc, bucket, key_name, *result.UploadId, payload, int64(num_parts))
 
-	resp, err := Uploadpart(svc, bucket, key_name, *result.UploadId, payload, int64(num_parts))
-	assert.Nil(err)
+// 	assert.Nil(err)
+// 	fmt.Println("Resp: ", resp)
 
-	_, err = CompleteMultiUpload(svc, bucket, key_name, int64(num_parts), "*result.UploadId", *resp.ETag)
-	assert.NotNil(err)
-	if err != nil {
-		if awsErr, ok := err.(awserr.Error); ok {
+// 	_, err = CompleteMultiUpload(svc, bucket, key_name, int64(num_parts), "*result.UploadId", *resp.ETag)
+// 	
+// 	assert.NotNil(err)
+// 	if err != nil {
+// 		if awsErr, ok := err.(awserr.Error); ok {
 
-			assert.Equal(awsErr.Code(), "NoSuchKey")
-			assert.Equal(awsErr.Message(), "")
-		}
-	}
-}
+// 			assert.Equal(awsErr.Code(), "NoSuchKey")
+// 			assert.Equal(awsErr.Message(), "")
+// 		}
+// 	}
+// }
 
 func (suite *S3Suite) TestUploadPartNoSuchUpload() {
 
@@ -1608,7 +1610,7 @@ func (suite *S3Suite) TestObjectCreateBadMd5Unreadable() {
 	/*
 		Resource : object, method: put
 		Scenario : create w/non-graphics in MD5.
-		Assertion: fails.
+		Assertion: fails with invalid header field value
 	*/
 
 	assert := suite
@@ -1624,8 +1626,8 @@ func (suite *S3Suite) TestObjectCreateBadMd5Unreadable() {
 	if err != nil {
 		if awsErr, ok := err.(awserr.Error); ok {
 
-			assert.Equal(awsErr.Code(), "AccessDenied")
-			assert.Equal(awsErr.Message(), "")
+			assert.Equal(awsErr.Code(), "RequestError")
+			assert.Equal(awsErr.Message(), "send request failed")
 		}
 	}
 
@@ -1719,7 +1721,7 @@ func (suite *S3Suite) TestObjectCreateBadExpectUnreadable() {
 	/*
 		Resource : object, method: put
 		Scenario : create w/non-graphic expect.
-		Assertion: gabbage, succeeds!
+		Assertion: fails with invalid header field value
 	*/
 
 	assert := suite
@@ -1731,7 +1733,7 @@ func (suite *S3Suite) TestObjectCreateBadExpectUnreadable() {
 	err := CreateBucket(svc, bucket)
 
 	err = SetupObjectWithHeader(svc, bucket, key, content, headers)
-	assert.Nil(err)
+	assert.NotNil(err)
 }
 
 //..........................................Content Length header............................................
@@ -1932,7 +1934,7 @@ func (suite *S3Suite) TestObjectCreateBadContenttypeUnreadable() {
 	/*
 		Resource : object, method: put
 		Scenario : create w/non-graphic content type.
-		Assertion: suceeds!
+		Assertion: fails with invalid header field value
 	*/
 
 	assert := suite
@@ -1944,7 +1946,7 @@ func (suite *S3Suite) TestObjectCreateBadContenttypeUnreadable() {
 	err := CreateBucket(svc, bucket)
 
 	err = SetupObjectWithHeader(svc, bucket, key, content, headers)
-	assert.Nil(err)
+	assert.NotNil(err)
 }
 
 //..................................Authorization header.........................................................
@@ -1955,6 +1957,7 @@ func (suite *S3Suite) TestObjectCreateBadAuthorizationUnreadable() {
 		Resource : object, method: put
 		Scenario : create w/non-graphic authorization.
 		Assertion: suceeds.... but should fail
+			"Authorization" is in the ingnored header list, so its value does not matter
 	*/
 
 	assert := suite
@@ -1964,7 +1967,7 @@ func (suite *S3Suite) TestObjectCreateBadAuthorizationUnreadable() {
 	key := "key1"
 	err := CreateBucket(svc, bucket)
 
-	headers := map[string]string{"Authorization": "\x07"}
+	headers := map[string]string{"Authorization": "\x01"}
 
 	err = SetupObjectWithHeader(svc, bucket, key, content, headers)
 	assert.Nil(err)

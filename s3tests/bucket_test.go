@@ -236,7 +236,7 @@ func (suite *S3Suite) TestBucketCreateBadExpectUnreadable() {
 	/*
 		Resource : bucket, method: put
 		Scenario :create w/expect nongraphic.
-		Assertion: garbage, but S3 succeeds!
+		Assertion: fails with "invalid header field value"
 	*/
 
 	assert := suite
@@ -246,7 +246,8 @@ func (suite *S3Suite) TestBucketCreateBadExpectUnreadable() {
 	err := CreateBucket(svc, bucket)
 
 	err = CreateBucketWithHeader(svc, bucket, acl)
-	assert.Nil(err)
+
+	assert.NotNil(err)
 }
 
 func (suite *S3Suite) TestBucketCreateBadContentLengthEmpty() {
@@ -443,12 +444,11 @@ func (suite *S3Suite) TestLifecycleInvalidMD5() {
 
 	md5 := string(b)
 
-	_, err = SetLifecycle(svc, bucket, "rule1", "Enabled", md5)
+	_, err = SetLifecycle(svc, bucket, "", "Enabled", md5)
 	assert.NotNil(err)
 	if err != nil {
 		if awsErr, ok := err.(awserr.Error); ok {
-
-			assert.Equal(awsErr.Code(), "NotImplemented")
+			assert.Equal(awsErr.Code(), "MalformedXML")
 			assert.Equal(awsErr.Message(), "")
 		}
 	}
@@ -481,7 +481,7 @@ func (suite *S3Suite) TestLifecycleInvalidStatus() {
 	if err != nil {
 		if awsErr, ok := err.(awserr.Error); ok {
 
-			assert.Equal(awsErr.Code(), "NotImplemented")
+			assert.Equal(awsErr.Code(), "MalformedXML")
 			assert.Equal(awsErr.Message(), "")
 		}
 	}
@@ -491,7 +491,7 @@ func (suite *S3Suite) TestLifecycleInvalidStatus() {
 	if err != nil {
 		if awsErr, ok := err.(awserr.Error); ok {
 
-			assert.Equal(awsErr.Code(), "NotImplemented")
+			assert.Equal(awsErr.Code(), "MalformedXML")
 			assert.Equal(awsErr.Message(), "")
 		}
 	}
@@ -501,7 +501,7 @@ func (suite *S3Suite) TestLifecycleInvalidStatus() {
 	if err != nil {
 		if awsErr, ok := err.(awserr.Error); ok {
 
-			assert.Equal(awsErr.Code(), "NotImplemented")
+			assert.Equal(awsErr.Code(), "MalformedXML")
 			assert.Equal(awsErr.Message(), "")
 		}
 	}
