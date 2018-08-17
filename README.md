@@ -5,7 +5,7 @@ This is a set of integration tests for the S3 (AWS) interface of [RGW](http://do
 
 It might also be useful for people implementing software that exposes an S3-like API.
 
-The test suite only covers the REST interface and uses [GO amazon SDK](https://aws.amazon.com/sdk-for-go/) version 1.11.364 and [Golang Environment setup](https://golang.org/doc/install).
+The test suite only covers the REST interface and uses [GO amazon SDK](https://aws.amazon.com/sdk-for-go/) and [Golang Environment setup](https://golang.org/doc/install).
 
 ### Get the source code
 
