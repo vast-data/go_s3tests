@@ -37,7 +37,7 @@ func GetPrefix() string {
 func GetBucketName() string {
 
   prefix := GetPrefix()
-  random := String(6) 
+  random := String(20) 
   num := bucket_counter
 
   name := fmt.Sprintf("%s-%s-%d", prefix, random, num)
