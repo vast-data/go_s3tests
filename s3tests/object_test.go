@@ -1513,7 +1513,7 @@ func (suite *S3Suite) TestUploadPartNoSuchUpload() {
 	if err != nil {
 		if awsErr, ok := err.(awserr.Error); ok {
 
-			assert.Equal(awsErr.Code(), "NoSuchKey")
+			assert.Equal(awsErr.Code(), "NoSuchUpload")
 			assert.Equal(awsErr.Message(), "")
 		}
 	}
