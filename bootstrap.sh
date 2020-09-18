@@ -14,7 +14,7 @@ if [ -f /etc/debian_version ]; then
         sudo apt-get -y install $missing
     fi
 elif [ -f /etc/fedora-release ]; then
-    for package in golang-gopkg-yaml golang; do
+    for package in golang; do
         if [ "$(rpm -qa $package 2>/dev/null)" == "" ]; then
             missing="${missing:+$missing }$package"
         fi
@@ -24,7 +24,7 @@ elif [ -f /etc/fedora-release ]; then
         sudo yum -y install $missing
     fi
 elif [ -f /etc/redhat-release ]; then
-    for package in golang-gopkg-yaml golang; do
+    for package in golang; do
         if [ "$(rpm -qa $package 2>/dev/null)" == "" ]; then
             missing="${missing:+$missing }$package"
         fi
