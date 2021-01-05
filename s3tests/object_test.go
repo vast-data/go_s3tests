@@ -1849,7 +1849,7 @@ func (suite *S3Suite) TestObjectCreateBadContentlengthMismatchAbove() {
 
 	assert := suite
 	content := "bar"
-	length := string(len(content) + 1)
+	length := fmt.Sprint(len(content) + 1)
 	headers := map[string]string{"Content-Length": length}
 
 	bucket := GetBucketName()

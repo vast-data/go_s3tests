@@ -113,10 +113,12 @@ func CreateObjects(svc *s3.S3, bucket string, objects map[string]string) error {
 			Key:    &key,
 		})
 
-		err = err
+		if err != nil {
+			return err
+		}
 	}
 
-	return err
+	return nil
 }
 
 func DeleteBucket(svc *s3.S3, bucket string) error {
@@ -663,12 +665,7 @@ func GetObj(svc *s3.S3, bucket string, key string) (*s3.GetObjectOutput, error) 
 
 func PutObjectWithIfMatch (svc *s3.S3, bucket string, key string, content string, tag string) error {
 
-	data, err := GetObject(svc, bucket, key)
-
-	if data != "" {
-
-		fmt.Sprintf("some data, %v", data)
-	}
+	_, err := GetObject(svc, bucket, key)
 
 	if err == nil{
 
@@ -899,7 +896,7 @@ func SetupRequest(serviceName, region, body string) (*http.Request, io.ReadSeeke
 	req, _ := http.NewRequest("POST", endpoint, reader)
 	req.Header.Add("X-Amz-Target", "prefix.Operation")
 	req.Header.Add("Content-Type", "application/x-amz-json-1.0")
-	req.Header.Add("Content-Length", string(len(body)))
+	req.Header.Add("Content-Length", fmt.Sprint(len(body)))
 	req.Header.Add("X-Amz-Meta-Other-Header", "some-value=!@#$%^&* (+)")
 	req.Header.Add("X-Amz-Meta-Other-Header_With_Underscore", "some-value=!@#$%^&* (+)")
 	req.Header.Add("X-amz-Meta-Other-Header_With_Underscore", "some-value=!@#$%^&* (+)")
@@ -914,7 +911,7 @@ func SetupRawRequest(proto, method, url, body string) (*http.Request, io.ReadSee
 	req, _ := http.NewRequest(method, endpoint, reader)
 	req.Header.Add("X-Amz-Target", "prefix.Operation")
 	req.Header.Add("Content-Type", "application/x-amz-json-1.0")
-	req.Header.Add("Content-Length", string(len(body)))
+	req.Header.Add("Content-Length", fmt.Sprint(len(body)))
 	req.Header.Add("X-Amz-Meta-Other-Header", "some-value=!@#$%^&* (+)")
 	req.Header.Add("X-Amz-Meta-Other-Header_With_Underscore", "some-value=!@#$%^&* (+)")
 	req.Header.Add("X-amz-Meta-Other-Header_With_Underscore", "some-value=!@#$%^&* (+)")
