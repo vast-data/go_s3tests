@@ -30,8 +30,8 @@ func (suite *S3Suite) TestObjectWriteToNonExistantBucket() {
 	if err != nil {
 		if awsErr, ok := err.(awserr.Error); ok {
 
-			assert.Equal(awsErr.Code(), "NoSuchBucket")
-			assert.Equal(awsErr.Message(), "")
+			assert.Equal("NoSuchBucket", awsErr.Code())
+			assert.Equal("", awsErr.Message())
 		}
 
 	}
@@ -81,8 +81,8 @@ func (suite *S3Suite) TestObjectReadNotExist() {
 	if err != nil {
 		if awsErr, ok := err.(awserr.Error); ok {
 
-			assert.Equal(awsErr.Code(), "NoSuchKey")
-			assert.Equal(awsErr.Message(), "")
+			assert.Equal("NoSuchKey", awsErr.Code())
+			assert.Equal("", awsErr.Message())
 
 		}
 	}
@@ -105,8 +105,8 @@ func (suite *S3Suite) TestObjectReadFromNonExistantBucket() {
 	if err != nil {
 		if awsErr, ok := err.(awserr.Error); ok {
 
-			assert.Equal(awsErr.Code(), "NoSuchBucket")
-			assert.Equal(awsErr.Message(), "")
+			assert.Equal("NoSuchBucket", awsErr.Code())
+			assert.Equal("", awsErr.Message())
 		}
 
 	}
@@ -128,7 +128,7 @@ func (suite *S3Suite) TestObjectWriteReadUpdateReadDelete() {
 
 	// Read object
 	result, _ := GetObject(svc, bucket, key)
-	assert.Equal(result, "hello")
+	assert.Equal("hello", result)
 
 	//Update object
 	PutObjectToBucket(svc, bucket, key, "Come on !!")
@@ -136,7 +136,7 @@ func (suite *S3Suite) TestObjectWriteReadUpdateReadDelete() {
 
 	// Read object again
 	result, _ = GetObject(svc, bucket, key)
-	assert.Equal(result, "Come on !!")
+	assert.Equal("Come on !!", result)
 
 	err = DeleteObjects(svc, bucket)
 	assert.Nil(err)
@@ -252,8 +252,8 @@ func (suite *S3Suite) TestRangedRequest() {
 
 	resp, data, err = GetObjectWithRange(svc, bucket, key, "bytes=4-7")
 	assert.Nil(err)
-	assert.Equal(data, content[4:8])
-	assert.Equal(*resp.AcceptRanges, "bytes")
+	assert.Equal(content[4:8], data)
+	assert.Equal("bytes", *resp.AcceptRanges)
 }
 
 func (suite *S3Suite) TestRangedRequestSkipLeadingBytes() {
@@ -273,8 +273,8 @@ func (suite *S3Suite) TestRangedRequestSkipLeadingBytes() {
 
 	resp, data, err = GetObjectWithRange(svc, bucket, key, "bytes=4-")
 	assert.Nil(err)
-	assert.Equal(data, content[4:])
-	assert.Equal(*resp.AcceptRanges, "bytes")
+	assert.Equal(content[4:], data)
+	assert.Equal("bytes", *resp.AcceptRanges)
 
 }
 
@@ -295,8 +295,8 @@ func (suite *S3Suite) TestRangedRequestReturnTrailingBytes() {
 
 	resp, data, err = GetObjectWithRange(svc, bucket, key, "bytes=-8")
 	assert.Nil(err)
-	assert.Equal(data, content[3:11])
-	assert.Equal(*resp.AcceptRanges, "bytes")
+	assert.Equal(content[3:11], data)
+	assert.Equal("bytes", *resp.AcceptRanges)
 }
 
 func (suite *S3Suite) TestRangedRequestInvalidRange() {
@@ -317,8 +317,8 @@ func (suite *S3Suite) TestRangedRequestInvalidRange() {
 	if err != nil {
 		if awsErr, ok := err.(awserr.Error); ok {
 
-			assert.Equal(awsErr.Code(), "InvalidRange")
-			assert.Equal(awsErr.Message(), "")
+			assert.Equal("InvalidRange", awsErr.Code())
+			assert.Equal("", awsErr.Message())
 
 		}
 	}
@@ -342,8 +342,8 @@ func (suite *S3Suite) TestRangedRequestEmptyObject() {
 	if err != nil {
 		if awsErr, ok := err.(awserr.Error); ok {
 
-			assert.Equal(awsErr.Code(), "InvalidRange")
-			assert.Equal(awsErr.Message(), "")
+			assert.Equal("InvalidRange", awsErr.Code())
+			assert.Equal("", awsErr.Message())
 
 		}
 	}
@@ -354,7 +354,7 @@ func (suite *S3Suite) TestObjectSetGetMetadataNoneToGood() {
 	assert := suite
 	metadata := map[string]*string{"mymeta": nil}
 	got := GetSetMetadata(metadata)
-	assert.Equal(got, metadata)
+	assert.Equal(metadata, got)
 }
 
 func (suite *S3Suite) TestObjectSetGetMetadataNoneToEmpty() {
@@ -362,7 +362,7 @@ func (suite *S3Suite) TestObjectSetGetMetadataNoneToEmpty() {
 	assert := suite
 	metadata := map[string]*string{"": nil}
 	got := GetSetMetadata(metadata)
-	assert.Equal(got, metadata)
+	assert.Equal(metadata, got)
 }
 
 func (suite *S3Suite) TestObjectSetGetMetadataOverwriteToGood() {
@@ -371,11 +371,11 @@ func (suite *S3Suite) TestObjectSetGetMetadataOverwriteToGood() {
 
 	oldmetadata := map[string]*string{"meta1": nil}
 	got := GetSetMetadata(oldmetadata)
-	assert.Equal(got, oldmetadata)
+	assert.Equal(oldmetadata, got)
 
 	newmetadata := map[string]*string{"meta2": nil}
 	got = GetSetMetadata(newmetadata)
-	assert.Equal(got, newmetadata)
+	assert.Equal(newmetadata, got)
 }
 
 func (suite *S3Suite) TestObjectSetGetMetadataOverwriteToEmpty() {
@@ -384,11 +384,11 @@ func (suite *S3Suite) TestObjectSetGetMetadataOverwriteToEmpty() {
 
 	oldmetadata := map[string]*string{"meta1": nil}
 	got := GetSetMetadata(oldmetadata)
-	assert.Equal(got, oldmetadata)
+	assert.Equal(oldmetadata, got)
 
 	newmetadata := map[string]*string{"": nil}
 	got = GetSetMetadata(newmetadata)
-	assert.Equal(got, newmetadata)
+	assert.Equal(newmetadata, got)
 }
 
 //..............................................SSE-C encrypted transfer....................................................
@@ -963,7 +963,7 @@ func (suite *S3Suite) TestGetObjectIfmatchGood() {
 
 	got, err := GetObjectWithIfMatch(svc, bucket, "foo", *object.ETag)
 	assert.Nil(err)
-	assert.Equal(got, "bar")
+	assert.Equal("bar", got)
 
 }
 
@@ -986,7 +986,7 @@ func (suite *S3Suite) TestGetObjectIfmatchFailed() {
 	assert.NotNil(err)
 	if err != nil {
 		if awsErr, ok := err.(awserr.Error); ok {
-			assert.Equal(awsErr.Code(), "PreconditionFailed")
+			assert.Equal("PreconditionFailed", awsErr.Code())
 		}
 	}
 
@@ -1013,8 +1013,8 @@ func (suite *S3Suite) TestGetObjectIfNoneMatchGood() {
 	if err != nil {
 		if awsErr, ok := err.(awserr.Error); ok {
 
-			assert.Equal(awsErr.Code(), "NotModified")
-			assert.Equal(awsErr.Message(), "Not Modified")
+			assert.Equal("NotModified", awsErr.Code())
+			assert.Equal("Not Modified", awsErr.Message())
 		}
 	}
 
@@ -1037,7 +1037,7 @@ func (suite *S3Suite) TestGetObjectIfNoneMatchFailed() {
 
 	got, err := GetObjectWithIfNoneMatch(svc, bucket, "foo", "ABCORZ")
 	assert.Nil(err)
-	assert.Equal(got, "bar")
+	assert.Equal("bar", got)
 }
 
 func (suite *S3Suite) TestGetObjectIfModifiedSinceGood() {
@@ -1060,7 +1060,7 @@ func (suite *S3Suite) TestGetObjectIfModifiedSinceGood() {
 
 	got, err := GetObjectWithIfModifiedSince(svc, bucket, "foo", now)
 	assert.Nil(err)
-	assert.Equal(got, "bar")
+	assert.Equal("bar", got)
 }
 
 func (suite *S3Suite) TestGetObjectIfUnModifiedSinceGood() {
@@ -1085,8 +1085,8 @@ func (suite *S3Suite) TestGetObjectIfUnModifiedSinceGood() {
 	if err != nil {
 		if awsErr, ok := err.(awserr.Error); ok {
 
-			assert.Equal(awsErr.Code(), "PreconditionFailed")
-			assert.Equal(awsErr.Message(), "")
+			assert.Equal("PreconditionFailed", awsErr.Code())
+			assert.Equal("", awsErr.Message())
 		}
 	}
 }
@@ -1110,7 +1110,7 @@ func (suite *S3Suite) TestGetObjectIfUnModifiedSinceFailed() {
 
 	got, err := GetObjectWithIfUnModifiedSince(svc, bucket, "foo", future)
 	assert.Nil(err)
-	assert.Equal(got, "bar")
+	assert.Equal("bar", got)
 }
 
 //................put object with condition..............................................
@@ -1131,7 +1131,7 @@ func (suite *S3Suite) TestPutObjectIfMatchGood() {
 	err = CreateObjects(svc, bucket, objects)
 
 	gotData, err := GetObject(svc, bucket, "foo")
-	assert.Equal(gotData, "bar")
+	assert.Equal("bar", gotData)
 
 	object, err := GetObj(svc, bucket, "foo")
 	err = PutObjectWithIfMatch(svc, bucket, "foo", "zar", *object.ETag)
@@ -1139,7 +1139,7 @@ func (suite *S3Suite) TestPutObjectIfMatchGood() {
 
 	new_data, _ := GetObject(svc, bucket, "foo")
 	assert.Nil(err)
-	assert.Equal(new_data, "zar")
+	assert.Equal("zar", new_data)
 }
 
 func (suite *S3Suite) TestPutObjectIfMatchFailed() {
@@ -1158,13 +1158,13 @@ func (suite *S3Suite) TestPutObjectIfMatchFailed() {
 	err = CreateObjects(svc, bucket, objects)
 
 	gotData, err := GetObject(svc, bucket, "key1")
-	assert.Equal(gotData, "bar")
+	assert.Equal("bar", gotData)
 
 	err = PutObjectWithIfMatch(svc, bucket, "key1", "zar", "ABCORZmmmm")
 
 	oldData, err := GetObject(svc, bucket, "key1")
 	assert.Nil(err)
-	assert.Equal(oldData, "zar")
+	assert.Equal("zar", oldData)
 }
 
 func (suite *S3Suite) TestPutObjectIfmatchNonexistedFailed() {
@@ -1186,8 +1186,8 @@ func (suite *S3Suite) TestPutObjectIfmatchNonexistedFailed() {
 	if err != nil {
 		if awsErr, ok := err.(awserr.Error); ok {
 
-			assert.Equal(awsErr.Code(), "NoSuchKey")
-			assert.Equal(awsErr.Message(), "")
+			assert.Equal("NoSuchKey", awsErr.Code())
+			assert.Equal("", awsErr.Message())
 		}
 	}
 }
@@ -1208,14 +1208,14 @@ func (suite *S3Suite) TestPutObjectIfNonMatchGood() {
 	err = CreateObjects(svc, bucket, objects)
 
 	gotData, err := GetObject(svc, bucket, "foo")
-	assert.Equal(gotData, "bar")
+	assert.Equal("bar", gotData)
 
 	err = PutObjectWithIfNoneMatch(svc, bucket, "foo", "zar", "ABCORZ")
 	assert.Nil(err)
 
 	new_data, _ := GetObject(svc, bucket, "foo")
 	assert.Nil(err)
-	assert.Equal(new_data, "zar")
+	assert.Equal("zar", new_data)
 }
 
 func (suite *S3Suite) TestPutObjectIfNonMatchNonexistedGood() {
@@ -1235,7 +1235,7 @@ func (suite *S3Suite) TestPutObjectIfNonMatchNonexistedGood() {
 	assert.Nil(err)
 
 	data, err := GetObject(svc, bucket, "key1")
-	assert.Equal(data, "bar")
+	assert.Equal("bar", data)
 }
 
 func (suite *S3Suite) TestPutObjectIfNonMatchOverwriteExistedFailed() {
@@ -1254,20 +1254,20 @@ func (suite *S3Suite) TestPutObjectIfNonMatchOverwriteExistedFailed() {
 	err = CreateObjects(svc, bucket, objects)
 
 	gotData, err := GetObject(svc, bucket, "key1")
-	assert.Equal(gotData, "bar")
+	assert.Equal("bar", gotData)
 
 	err = PutObjectWithIfNoneMatch(svc, bucket, "key1", "zar", "*")
 	assert.NotNil(err)
 	if err != nil {
 		if awsErr, ok := err.(awserr.Error); ok {
 
-			assert.Equal(awsErr.Code(), "PreconditionFailed")
-			assert.Equal(awsErr.Message(), "")
+			assert.Equal("PreconditionFailed", awsErr.Code())
+			assert.Equal("", awsErr.Message())
 		}
 	}
 
 	oldData, err := GetObject(svc, bucket, "key1")
-	assert.Equal(oldData, "bar")
+	assert.Equal("bar", oldData)
 }
 
 //......................................Multipart Upload...................................................................
@@ -1291,8 +1291,8 @@ func (suite *S3Suite) TestAbortMultipartUploadInvalid() {
 	if err != nil {
 		if awsErr, ok := err.(awserr.Error); ok {
 
-			assert.Equal(awsErr.Code(), "InvalidParameter")
-			assert.Equal(awsErr.Message(), "1 validation error(s) found.")
+			assert.Equal("InvalidParameter", awsErr.Code())
+			assert.Equal("1 validation error(s) found.", awsErr.Message())
 		}
 	}
 
@@ -1317,8 +1317,8 @@ func (suite *S3Suite) TestAbortMultipartUploadNotfound() {
 	if err != nil {
 		if awsErr, ok := err.(awserr.Error); ok {
 
-			assert.Equal(awsErr.Code(), "NoSuchUpload")
-			assert.Equal(awsErr.Message(), "")
+			assert.Equal("NoSuchUpload", awsErr.Code())
+			assert.Equal("", awsErr.Message())
 		}
 	}
 
@@ -1350,13 +1350,13 @@ func (suite *S3Suite) TestAbortMultipartUpload() {
 	assert.Nil(err)
 
 	resp, err := Listparts(svc, bucket, key, *result.UploadId)
-	assert.Equal(len(resp.Parts), 0)
+	assert.Equal(0, len(resp.Parts))
 	assert.NotNil(err)
 	if err != nil {
 		if awsErr, ok := err.(awserr.Error); ok {
 
-			assert.Equal(awsErr.Code(), "NoSuchKey")
-			assert.Equal(awsErr.Message(), "")
+			assert.Equal("NoSuchKey", awsErr.Code())
+			assert.Equal("", awsErr.Message())
 		}
 	}
 }
@@ -1391,7 +1391,7 @@ func (suite *S3Suite) TestMultipartUploadOverwriteExistingObject() {
 
 	gotData, err := GetObject(svc, bucket, key_name)
 	assert.Nil(err)
-	assert.Equal(gotData, payload)
+	assert.Equal(payload, gotData)
 }
 
 func (suite *S3Suite) TestMultipartUploadContents() {
@@ -1420,7 +1420,7 @@ func (suite *S3Suite) TestMultipartUploadContents() {
 
 	gotData, err := GetObject(svc, bucket, key_name)
 	assert.Nil(err)
-	assert.Equal(gotData, payload)
+	assert.Equal(payload, gotData)
 }
 
 func (suite *S3Suite) TestMultipartUploadInvalidPart() {
@@ -1449,8 +1449,8 @@ func (suite *S3Suite) TestMultipartUploadInvalidPart() {
 	if err != nil {
 		if awsErr, ok := err.(awserr.Error); ok {
 
-			assert.Equal(awsErr.Code(), "InvalidPart")
-			assert.Equal(awsErr.Message(), "")
+			assert.Equal("InvalidPart", awsErr.Code())
+			assert.Equal("", awsErr.Message())
 		}
 	}
 }
@@ -1479,13 +1479,13 @@ func (suite *S3Suite) TestMultipartUploadInvalidPart() {
 // 	fmt.Println("Resp: ", resp)
 
 // 	_, err = CompleteMultiUpload(svc, bucket, key_name, int64(num_parts), "*result.UploadId", *resp.ETag)
-// 	
+//
 // 	assert.NotNil(err)
 // 	if err != nil {
 // 		if awsErr, ok := err.(awserr.Error); ok {
 
-// 			assert.Equal(awsErr.Code(), "NoSuchKey")
-// 			assert.Equal(awsErr.Message(), "")
+// 			assert.Equal("NoSuchKey", awsErr.Code())
+// 			assert.Equal("", awsErr.Message())
 // 		}
 // 	}
 // }
@@ -1513,8 +1513,8 @@ func (suite *S3Suite) TestUploadPartNoSuchUpload() {
 	if err != nil {
 		if awsErr, ok := err.(awserr.Error); ok {
 
-			assert.Equal(awsErr.Code(), "NoSuchUpload")
-			assert.Equal(awsErr.Message(), "")
+			assert.Equal("NoSuchUpload", awsErr.Code())
+			assert.Equal("", awsErr.Message())
 		}
 	}
 }
@@ -1542,8 +1542,8 @@ func (suite *S3Suite) TestObjectCreateBadMd5InvalidShort() {
 	if err != nil {
 		if awsErr, ok := err.(awserr.Error); ok {
 
-			assert.Equal(awsErr.Code(), "InvalidDigest")
-			assert.Equal(awsErr.Message(), "")
+			assert.Equal("InvalidDigest", awsErr.Code())
+			assert.Equal("", awsErr.Message())
 		}
 	}
 
@@ -1570,8 +1570,8 @@ func (suite *S3Suite) TestObjectCreateBadMd5Bad() {
 	if err != nil {
 		if awsErr, ok := err.(awserr.Error); ok {
 
-			assert.Equal(awsErr.Code(), "BadDigest")
-			assert.Equal(awsErr.Message(), "")
+			assert.Equal("BadDigest", awsErr.Code())
+			assert.Equal("", awsErr.Message())
 		}
 	}
 
@@ -1598,8 +1598,8 @@ func (suite *S3Suite) TestObjectCreateBadMd5Empty() {
 	if err != nil {
 		if awsErr, ok := err.(awserr.Error); ok {
 
-			assert.Equal(awsErr.Code(), "InvalidDigest")
-			assert.Equal(awsErr.Message(), "")
+			assert.Equal("InvalidDigest", awsErr.Code())
+			assert.Equal("", awsErr.Message())
 		}
 	}
 
@@ -1626,8 +1626,8 @@ func (suite *S3Suite) TestObjectCreateBadMd5Unreadable() {
 	if err != nil {
 		if awsErr, ok := err.(awserr.Error); ok {
 
-			assert.Equal(awsErr.Code(), "RequestError")
-			assert.Equal(awsErr.Message(), "send request failed")
+			assert.Equal("RequestError", awsErr.Code())
+			assert.Equal("send request failed", awsErr.Message())
 		}
 	}
 
@@ -1759,8 +1759,8 @@ func (suite *S3Suite) testObjectCreateBadContentlengthEmpty() {
 	if err != nil {
 		if awsErr, ok := err.(awserr.Error); ok {
 
-			assert.Equal(awsErr.Code(), "None")
-			assert.Equal(awsErr.Message(), "")
+			assert.Equal("None", awsErr.Code())
+			assert.Equal("", awsErr.Message())
 		}
 	}
 }
@@ -1786,8 +1786,8 @@ func (suite *S3Suite) TestObjectCreateBadContentlengthNegative() {
 	if err != nil {
 		if awsErr, ok := err.(awserr.Error); ok {
 
-			assert.Equal(awsErr.Code(), "MissingContentLength")
-			assert.Equal(awsErr.Message(), "")
+			assert.Equal("MissingContentLength", awsErr.Code())
+			assert.Equal("", awsErr.Message())
 		}
 	}
 }
@@ -1833,8 +1833,8 @@ func (suite *S3Suite) TestObjectCreateBadContentlengthUnreadable() {
 	if err != nil {
 		if awsErr, ok := err.(awserr.Error); ok {
 
-			assert.Equal(awsErr.Code(), "MissingContentLength")
-			assert.Equal(awsErr.Message(), "")
+			assert.Equal("MissingContentLength", awsErr.Code())
+			assert.Equal("", awsErr.Message())
 		}
 	}
 }
@@ -1861,8 +1861,8 @@ func (suite *S3Suite) TestObjectCreateBadContentlengthMismatchAbove() {
 	if err != nil {
 		if awsErr, ok := err.(awserr.Error); ok {
 
-			assert.Equal(awsErr.Code(), "MissingContentLength")
-			assert.Equal(awsErr.Message(), "")
+			assert.Equal("MissingContentLength", awsErr.Code())
+			assert.Equal("", awsErr.Message())
 		}
 	}
 }
@@ -1974,8 +1974,8 @@ func (suite *S3Suite) TestObjectCreateBadAuthorizationUnreadable() {
 	if err != nil {
 		if awsErr, ok := err.(awserr.Error); ok {
 
-			assert.Equal(awsErr.Code(), "AccessDenied")
-			assert.Equal(awsErr.Message(), "")
+			assert.Equal("AccessDenied", awsErr.Code())
+			assert.Equal("", awsErr.Message())
 		}
 	}
 }
@@ -2002,8 +2002,8 @@ func (suite *S3Suite) TestObjectCreateBadAuthorizationEmpty() {
 	if err != nil {
 		if awsErr, ok := err.(awserr.Error); ok {
 
-			assert.Equal(awsErr.Code(), "AccessDenied")
-			assert.Equal(awsErr.Message(), "")
+			assert.Equal("AccessDenied", awsErr.Code())
+			assert.Equal("", awsErr.Message())
 		}
 	}
 }
@@ -2030,8 +2030,8 @@ func (suite *S3Suite) TestObjectCreateBadAuthorizationNone() {
 	if err != nil {
 		if awsErr, ok := err.(awserr.Error); ok {
 
-			assert.Equal(awsErr.Code(), "AccessDenied")
-			assert.Equal(awsErr.Message(), "")
+			assert.Equal("AccessDenied", awsErr.Code())
+			assert.Equal("", awsErr.Message())
 		}
 	}
 }
@@ -2060,12 +2060,12 @@ func (suite *HeadSuite) TestObjectListPrefixDelimiterPrefixDelimiterNotExist() {
 	if err != nil {
 		if awsErr, ok := err.(awserr.Error); ok {
 
-			assert.Equal(awsErr.Code(), "NoSuchBucket")
-			assert.Equal(awsErr.Message(), "")
+			assert.Equal("NoSuchBucket", awsErr.Code())
+			assert.Equal("", awsErr.Message())
 		}
 	}
-	assert.Equal(keys, []string{})
-	assert.Equal(prefixes, []string{})
+	assert.Equal([]string{}, keys)
+	assert.Equal([]string{}, prefixes)
 	assert.Equal(empty_list, list.Contents)
 }
 
@@ -2090,9 +2090,9 @@ func (suite *HeadSuite) TestObjectListPrefixDelimiterDelimiterNotExist() {
 
 	list, keys, prefixes, errr := ListObjectsWithDelimeterAndPrefix(svc, bucket, prefix, delimeter)
 	assert.Nil(errr)
-	assert.Equal(len(list.Contents), 3)
-	assert.Equal(keys, expectedkeys)
-	assert.Equal(prefixes, []string{})
+	assert.Equal(3, len(list.Contents))
+	assert.Equal(expectedkeys, keys)
+	assert.Equal([]string{}, prefixes)
 }
 
 func (suite *HeadSuite) TestObjectListPrefixDelimiterPrefixNotExist() {
@@ -2116,8 +2116,8 @@ func (suite *HeadSuite) TestObjectListPrefixDelimiterPrefixNotExist() {
 
 	list, keys, prefixes, errr := ListObjectsWithDelimeterAndPrefix(svc, bucket, prefix, delimeter)
 	assert.Nil(errr)
-	assert.Equal(keys, []string{})
-	assert.Equal(prefixes, []string{})
+	assert.Equal([]string{}, keys)
+	assert.Equal([]string{}, prefixes)
 	assert.Equal(empty_list, list.Contents)
 }
 
@@ -2143,11 +2143,11 @@ func (suite *HeadSuite) TestObjectListPrefixDelimiterAlt() {
 
 	list, keys, prefixes, errr := ListObjectsWithDelimeterAndPrefix(svc, bucket, prefix, delimeter)
 	assert.Nil(errr)
-	assert.Equal(*list.Prefix, prefix)
-	assert.Equal(*list.Delimiter, delimeter)
+	assert.Equal(prefix, *list.Prefix)
+	assert.Equal(delimeter, *list.Delimiter)
 
-	assert.Equal(keys, expected_keys)
-	assert.Equal(prefixes, expected_prefixes)
+	assert.Equal(expected_keys, keys)
+	assert.Equal(expected_prefixes, prefixes)
 }
 
 func (suite *HeadSuite) TestObjectListPrefixDelimiterBasic() {
@@ -2172,11 +2172,11 @@ func (suite *HeadSuite) TestObjectListPrefixDelimiterBasic() {
 
 	list, keys, prefixes, errr := ListObjectsWithDelimeterAndPrefix(svc, bucket, prefix, delimeter)
 	assert.Nil(errr)
-	assert.Equal(*list.Prefix, prefix)
+	assert.Equal(prefix, *list.Prefix)
 
-	assert.Equal(*list.Delimiter, delimeter)
-	assert.Equal(keys, expected_keys)
-	assert.Equal(prefixes, expected_prefixes)
+	assert.Equal(delimeter, *list.Delimiter)
+	assert.Equal(expected_keys, keys)
+	assert.Equal(expected_prefixes, prefixes)
 }
 
 func (suite *HeadSuite) TestObjectListPrefixUnreadable() {
@@ -2200,10 +2200,10 @@ func (suite *HeadSuite) TestObjectListPrefixUnreadable() {
 
 	list, keys, prefixes, errr := ListObjectsWithPrefix(svc, bucket, prefix)
 	assert.Nil(errr)
-	assert.Equal(*list.Prefix, prefix)
+	assert.Equal(prefix, *list.Prefix)
 
-	assert.Equal(prefixes, expected_prefixes)
-	assert.Equal(keys, expected_keys)
+	assert.Equal(expected_prefixes, prefixes)
+	assert.Equal(expected_keys, keys)
 
 }
 
@@ -2228,10 +2228,10 @@ func (suite *HeadSuite) TestObjectListPrefixNotExist() {
 
 	list, keys, prefixes, errr := ListObjectsWithPrefix(svc, bucket, prefix)
 	assert.Nil(errr)
-	assert.Equal(*list.Prefix, prefix)
+	assert.Equal(prefix, *list.Prefix)
 
-	assert.Equal(keys, expected_keys)
-	assert.Equal(prefixes, expected_prefixes)
+	assert.Equal(expected_keys, keys)
+	assert.Equal(expected_prefixes, prefixes)
 
 }
 
@@ -2256,10 +2256,10 @@ func (suite *HeadSuite) TestObjectListPrefixNone() {
 
 	list, keys, prefixes, errr := ListObjectsWithPrefix(svc, bucket, prefix)
 	assert.Nil(errr)
-	assert.Equal(*list.Prefix, prefix)
+	assert.Equal(prefix, *list.Prefix)
 
-	assert.Equal(keys, expected_keys)
-	assert.Equal(prefixes, expected_prefixes)
+	assert.Equal(expected_keys, keys)
+	assert.Equal(expected_prefixes, prefixes)
 }
 
 func (suite *HeadSuite) TestObjectListPrefixEmpty() {
@@ -2283,10 +2283,10 @@ func (suite *HeadSuite) TestObjectListPrefixEmpty() {
 
 	list, keys, prefixes, errr := ListObjectsWithPrefix(svc, bucket, prefix)
 	assert.Nil(errr)
-	assert.Equal(*list.Prefix, prefix)
+	assert.Equal(prefix, *list.Prefix)
 
-	assert.Equal(keys, expected_keys)
-	assert.Equal(prefixes, expected_prefixes)
+	assert.Equal(expected_keys, keys)
+	assert.Equal(expected_prefixes, prefixes)
 
 }
 
@@ -2311,10 +2311,10 @@ func (suite *HeadSuite) TestObjectListPrefixAlt() {
 
 	list, keys, prefixes, errr := ListObjectsWithPrefix(svc, bucket, prefix)
 	assert.Nil(errr)
-	assert.Equal(*list.Prefix, prefix)
+	assert.Equal(prefix, *list.Prefix)
 
-	assert.Equal(keys, expected_keys)
-	assert.Equal(prefixes, expected_prefixes)
+	assert.Equal(expected_keys, keys)
+	assert.Equal(expected_prefixes, prefixes)
 
 }
 
@@ -2339,10 +2339,10 @@ func (suite *HeadSuite) TestObjectListPrefixBasic() {
 
 	list, keys, prefixes, errr := ListObjectsWithPrefix(svc, bucket, prefix)
 	assert.Nil(errr)
-	assert.Equal(*list.Prefix, prefix)
+	assert.Equal(prefix, *list.Prefix)
 
-	assert.Equal(keys, expected_keys)
-	assert.Equal(prefixes, expected_prefixes)
+	assert.Equal(expected_keys, keys)
+	assert.Equal(expected_prefixes, prefixes)
 
 }
 
@@ -2367,10 +2367,10 @@ func (suite *HeadSuite) TestObjectListDelimiterNotExist() {
 
 	list, keys, prefixes, errr := ListObjectsWithDelimiter(svc, bucket, delimiter)
 	assert.Nil(errr)
-	assert.Equal(*list.Delimiter, delimiter)
+	assert.Equal(delimiter, *list.Delimiter)
 
-	assert.Equal(keys, expected_keys)
-	assert.Equal(prefixes, expected_prefixes)
+	assert.Equal(expected_keys, keys)
+	assert.Equal(expected_prefixes, prefixes)
 
 }
 
@@ -2395,10 +2395,10 @@ func (suite *HeadSuite) TestObjectListDelimiterNone() {
 
 	list, keys, prefixes, errr := ListObjectsWithDelimiter(svc, bucket, delimiter)
 	assert.Nil(errr)
-	assert.Equal(*list.Delimiter, delimiter)
+	assert.Equal(delimiter, *list.Delimiter)
 
-	assert.Equal(keys, expected_keys)
-	assert.Equal(prefixes, expected_prefixes)
+	assert.Equal(expected_keys, keys)
+	assert.Equal(expected_prefixes, prefixes)
 
 }
 
@@ -2421,10 +2421,10 @@ func (suite *HeadSuite) TestObjectListDelimiterEmpty() {
 
 	list, keys, prefixes, errr := ListObjectsWithDelimiter(svc, bucket, delimiter)
 	assert.Nil(errr)
-	assert.Equal(*list.Delimiter, delimiter)
+	assert.Equal(delimiter, *list.Delimiter)
 
-	assert.Equal(keys, expected_keys)
-	assert.Equal(prefixes, expected_prefixes)
+	assert.Equal(expected_keys, keys)
+	assert.Equal(expected_prefixes, prefixes)
 
 }
 
@@ -2449,10 +2449,10 @@ func (suite *HeadSuite) TestObjectListDelimiterUnreadable() {
 
 	list, keys, prefixes, errr := ListObjectsWithDelimiter(svc, bucket, delimiter)
 	assert.Nil(errr)
-	assert.Equal(*list.Delimiter, delimiter)
+	assert.Equal(delimiter, *list.Delimiter)
 
-	assert.Equal(keys, expected_keys)
-	assert.Equal(prefixes, expected_prefixes)
+	assert.Equal(expected_keys, keys)
+	assert.Equal(expected_prefixes, prefixes)
 
 }
 
@@ -2477,11 +2477,11 @@ func (suite *HeadSuite) TestObjectListDelimiterDot() {
 
 	list, keys, prefixes, errr := ListObjectsWithDelimiter(svc, bucket, delimiter)
 	assert.Nil(errr)
-	assert.Equal(*list.Delimiter, delimiter)
+	assert.Equal(delimiter, *list.Delimiter)
 
-	assert.Equal(keys, expected_keys)
-	assert.Equal(len(prefixes), 2)
-	assert.Equal(prefixes, expected_prefixes)
+	assert.Equal(expected_keys, keys)
+	assert.Equal(2, len(prefixes))
+	assert.Equal(expected_prefixes, prefixes)
 
 }
 
@@ -2506,11 +2506,11 @@ func (suite *HeadSuite) TestObjectListDelimiterPercentage() {
 
 	list, keys, prefixes, errr := ListObjectsWithDelimiter(svc, bucket, delimiter)
 	assert.Nil(errr)
-	assert.Equal(*list.Delimiter, delimiter)
+	assert.Equal(delimiter, *list.Delimiter)
 
-	assert.Equal(keys, expected_keys)
-	assert.Equal(len(prefixes), 2)
-	assert.Equal(prefixes, expected_prefixes)
+	assert.Equal(expected_keys, keys)
+	assert.Equal(2, len(prefixes))
+	assert.Equal(expected_prefixes, prefixes)
 
 }
 
@@ -2535,11 +2535,11 @@ func (suite *HeadSuite) TestObjectListDelimiterWhiteSpace() {
 
 	list, keys, prefixes, errr := ListObjectsWithDelimiter(svc, bucket, delimiter)
 	assert.Nil(errr)
-	assert.Equal(*list.Delimiter, delimiter)
+	assert.Equal(delimiter, *list.Delimiter)
 
-	assert.Equal(keys, expected_keys)
-	assert.Equal(len(prefixes), 2)
-	assert.Equal(prefixes, expected_prefixes)
+	assert.Equal(expected_keys, keys)
+	assert.Equal(2, len(prefixes))
+	assert.Equal(expected_prefixes, prefixes)
 
 }
 
@@ -2564,9 +2564,9 @@ func (suite *HeadSuite) TestObjectListDelimiterAlt() {
 
 	list, keys, prefixes, errr := ListObjectsWithDelimiter(svc, bucket, delimiter)
 	assert.Nil(errr)
-	assert.Equal(*list.Delimiter, delimiter)
+	assert.Equal(delimiter, *list.Delimiter)
 
-	assert.Equal(keys, expected_keys)
+	assert.Equal(expected_keys, keys)
 	assert.Equal(len(prefixes), 2)
 	assert.Equal(prefixes, expected_prefixes)
 
@@ -2596,8 +2596,8 @@ func (suite *HeadSuite) TestObjectListDelimiterBasic() {
 	assert.Equal(*list.Delimiter, delimiter)
 
 	assert.Equal(keys, expected_keys)
-	assert.Equal(len(prefixes), 2)
-	assert.Equal(prefixes, expected_prefixes)
+	assert.Equal(2, len(prefixes))
+	assert.Equal(expected_prefixes, prefixes)
 
 }
 
@@ -2625,9 +2625,9 @@ func (suite *HeadSuite) TestObjectListMaxkeysNone() {
 	for _, key := range resp.Contents {
 		keys = append(keys, *key.Key)
 	}
-	assert.Equal(keys, ExpectedKeys)
-	assert.Equal(*resp.MaxKeys, int64(1000))
-	assert.Equal(*resp.IsTruncated, false)
+	assert.Equal(ExpectedKeys, keys)
+	assert.Equal(int64(1000), *resp.MaxKeys)
+	assert.Equal(false, *resp.IsTruncated)
 }
 
 func (suite *HeadSuite) TestObjectListMaxkeysZero() {
@@ -2651,7 +2651,7 @@ func (suite *HeadSuite) TestObjectListMaxkeysZero() {
 	resp, keys, errr := GetKeysWithMaxKeys(svc, bucket, maxkeys)
 	assert.Nil(errr)
 	assert.Equal(ExpectedKeys, keys)
-	assert.Equal(*resp.IsTruncated, false)
+	assert.Equal(false, *resp.IsTruncated)
 }
 
 func (suite *HeadSuite) TestObjectListMaxkeysOne() {
@@ -2676,12 +2676,12 @@ func (suite *HeadSuite) TestObjectListMaxkeysOne() {
 	resp, keys, errr := GetKeysWithMaxKeys(svc, bucket, maxkeys)
 	assert.Nil(errr)
 	assert.Equal(EKeysMaxkey, keys)
-	assert.Equal(*resp.IsTruncated, true)
+	assert.Equal(true, *resp.IsTruncated)
 
 	resp, keys, errs := GetKeysWithMarker(svc, bucket, EKeysMaxkey[0])
 	assert.Nil(errs)
-	assert.Equal(*resp.IsTruncated, false)
-	assert.Equal(keys, EKeysMarker)
+	assert.Equal(false, *resp.IsTruncated)
+	assert.Equal(EKeysMarker, keys)
 
 }
 
@@ -2707,9 +2707,9 @@ func (suite *HeadSuite) TestObjectListMarkerBeforeList() {
 
 	resp, keys, errr := GetKeysWithMarker(svc, bucket, marker)
 	assert.Nil(errr)
-	assert.Equal(*resp.Marker, marker)
-	assert.Equal(keys, expected_keys)
-	assert.Equal(*resp.IsTruncated, false)
+	assert.Equal(marker, *resp.Marker)
+	assert.Equal(expected_keys, keys)
+	assert.Equal(false, *resp.IsTruncated)
 
 	err = DeleteObjects(svc, bucket)
 	err = DeleteBucket(svc, bucket)
@@ -2737,9 +2737,9 @@ func (suite *HeadSuite) TestObjectListMarkerAfterList() {
 
 	resp, keys, errr := GetKeysWithMarker(svc, bucket, marker)
 	assert.Nil(errr)
-	assert.Equal(*resp.Marker, marker)
-	assert.Equal(*resp.IsTruncated, false)
-	assert.Equal(keys, expected_keys)
+	assert.Equal(marker, *resp.Marker)
+	assert.Equal(false, *resp.IsTruncated)
+	assert.Equal(expected_keys, keys)
 
 }
 
@@ -2763,8 +2763,8 @@ func (suite *HeadSuite) TestObjectListMarkerNotInList() {
 
 	resp, keys, errr := GetKeysWithMarker(svc, bucket, marker)
 	assert.Nil(errr)
-	assert.Equal(*resp.Marker, marker)
-	assert.Equal(keys, expected_keys)
+	assert.Equal(marker, *resp.Marker)
+	assert.Equal(expected_keys, keys)
 }
 
 func (suite *HeadSuite) TestObjectListMarkerUnreadable() {
@@ -2787,9 +2787,9 @@ func (suite *HeadSuite) TestObjectListMarkerUnreadable() {
 
 	resp, keys, errr := GetKeysWithMarker(svc, bucket, marker)
 	assert.Nil(errr)
-	assert.Equal(*resp.Marker, marker)
-	assert.Equal(*resp.IsTruncated, false)
-	assert.Equal(keys, expected_keys)
+	assert.Equal(marker, *resp.Marker)
+	assert.Equal(false, *resp.IsTruncated)
+	assert.Equal(expected_keys, keys)
 
 }
 
@@ -2813,9 +2813,9 @@ func (suite *HeadSuite) TestObjectListMarkerEmpty() {
 
 	resp, keys, errr := GetKeysWithMarker(svc, bucket, marker)
 	assert.Nil(errr)
-	assert.Equal(*resp.Marker, marker)
-	assert.Equal(*resp.IsTruncated, false)
-	assert.Equal(keys, expected_keys)
+	assert.Equal(marker, *resp.Marker)
+	assert.Equal(false, *resp.IsTruncated)
+	assert.Equal(expected_keys, keys)
 
 }
 
@@ -2838,7 +2838,7 @@ func (suite *HeadSuite) TestObjectListMarkerNone() {
 
 	resp, _, errr := GetKeysWithMarker(svc, bucket, marker)
 	assert.Nil(errr)
-	assert.Equal(*resp.Marker, marker)
+	assert.Equal(marker, *resp.Marker)
 
 }
 
@@ -2863,14 +2863,14 @@ func (suite *HeadSuite) TestObjectListMany() {
 
 	resp, keys, errr := GetKeysWithMaxKeys(svc, bucket, maxkeys)
 	assert.Nil(errr)
-	assert.Equal(len(resp.Contents), 2)
-	assert.Equal(*resp.IsTruncated, true)
-	assert.Equal(keys, expected_keys)
+	assert.Equal(2, len(resp.Contents))
+	assert.Equal(true, *resp.IsTruncated)
+	assert.Equal(expected_keys, keys)
 
 	resp, keys, errs := GetKeysWithMarker(svc, bucket, expected_keys[1])
 	assert.Nil(errs)
-	assert.Equal(len(resp.Contents), 1)
-	assert.Equal(*resp.IsTruncated, false)
+	assert.Equal(1, len(resp.Contents))
+	assert.Equal(false, *resp.IsTruncated)
 	expected_keys = []string{"foo"}
 
 }

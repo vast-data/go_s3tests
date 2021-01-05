@@ -37,8 +37,8 @@ func (suite *S3Suite) TestBucketCreateReadDelete() {
 	if err != nil {
 		if awsErr, ok := err.(awserr.Error); ok {
 
-			assert.Equal(awsErr.Code(), "NoSuchBucket")
-			assert.Equal(awsErr.Message(), "")
+			assert.Equal("NoSuchBucket", awsErr.Code())
+			assert.Equal("", awsErr.Message())
 		}
 	}
 }
@@ -60,8 +60,8 @@ func (suite *S3Suite) TestBucketDeleteNotExist() {
 	if err != nil {
 		if awsErr, ok := err.(awserr.Error); ok {
 
-			assert.Equal(awsErr.Code(), "NoSuchBucket")
-			assert.Equal(awsErr.Message(), "")
+			assert.Equal("NoSuchBucket", awsErr.Code())
+			assert.Equal("", awsErr.Message())
 		}
 	}
 
@@ -90,8 +90,8 @@ func (suite *S3Suite) TestBucketDeleteNotEmpty() {
 	if err != nil {
 		if awsErr, ok := err.(awserr.Error); ok {
 
-			assert.Equal(awsErr.Code(), "BucketNotEmpty")
-			assert.Equal(awsErr.Message(), "")
+			assert.Equal("BucketNotEmpty", awsErr.Code())
+			assert.Equal("", awsErr.Message())
 		}
 	}
 
@@ -141,8 +141,8 @@ func (suite *S3Suite) TestBucketListDistinct() {
 	obj1, _ := GetObject(svc, bucket1, "key1")
 	obj2, _ := GetObject(svc, bucket2, "key2")
 
-	assert.Equal(obj1, "Hello")
-	assert.Equal(obj2, "Manze")
+	assert.Equal("Hello", obj1)
+	assert.Equal("Manze", obj2)
 
 }
 
@@ -189,8 +189,8 @@ func (suite *S3Suite) TestBucketPutCanned_acl() {
 	if err != nil {
 		if awsErr, ok := err.(awserr.Error); ok {
 
-			assert.Equal(awsErr.Code(), "AccessDenied")
-			assert.Equal(awsErr.Message(), "")
+			assert.Equal("AccessDenied", awsErr.Code())
+			assert.Equal("", awsErr.Message())
 		}
 	}
 }
@@ -341,8 +341,8 @@ func (suite *S3Suite) TestBucketCreateBadAuthorizationUnreadable() {
 	if err != nil {
 		if awsErr, ok := err.(awserr.Error); ok {
 
-			assert.Equal(awsErr.Code(), "AccessDenied")
-			assert.Equal(awsErr.Message(), "")
+			assert.Equal("AccessDenied", awsErr.Code())
+			assert.Equal("", awsErr.Message())
 		}
 	}
 }
@@ -366,8 +366,8 @@ func (suite *S3Suite) TestBucketCreateBadAuthorizationEmpty() {
 	if err != nil {
 		if awsErr, ok := err.(awserr.Error); ok {
 
-			assert.Equal(awsErr.Code(), "AccessDenied")
-			assert.Equal(awsErr.Message(), "")
+			assert.Equal("AccessDenied", awsErr.Code())
+			assert.Equal("", awsErr.Message())
 		}
 	}
 }
@@ -391,8 +391,8 @@ func (suite *S3Suite) TestBucketCreateBadAuthorizationNone() {
 	if err != nil {
 		if awsErr, ok := err.(awserr.Error); ok {
 
-			assert.Equal(awsErr.Code(), "AccessDenied")
-			assert.Equal(awsErr.Message(), "")
+			assert.Equal("AccessDenied", awsErr.Code())
+			assert.Equal("", awsErr.Message())
 		}
 	}
 }
@@ -416,8 +416,8 @@ func (suite *S3Suite) TestLifecycleGetNoLifecycle() {
 	if err != nil {
 		if awsErr, ok := err.(awserr.Error); ok {
 
-			assert.Equal(awsErr.Code(), "NoSuchLifecycleConfiguration")
-			assert.Equal(awsErr.Message(), "")
+			assert.Equal("NoSuchLifecycleConfiguration", awsErr.Code())
+			assert.Equal("", awsErr.Message())
 		}
 	}
 }
@@ -448,8 +448,8 @@ func (suite *S3Suite) TestLifecycleInvalidMD5() {
 	assert.NotNil(err)
 	if err != nil {
 		if awsErr, ok := err.(awserr.Error); ok {
-			assert.Equal(awsErr.Code(), "MalformedXML")
-			assert.Equal(awsErr.Message(), "")
+			assert.Equal("MalformedXML", awsErr.Code())
+			assert.Equal("", awsErr.Message())
 		}
 	}
 }
@@ -481,8 +481,8 @@ func (suite *S3Suite) TestLifecycleInvalidStatus() {
 	if err != nil {
 		if awsErr, ok := err.(awserr.Error); ok {
 
-			assert.Equal(awsErr.Code(), "MalformedXML")
-			assert.Equal(awsErr.Message(), "")
+			assert.Equal("MalformedXML", awsErr.Code())
+			assert.Equal("", awsErr.Message())
 		}
 	}
 
@@ -491,8 +491,8 @@ func (suite *S3Suite) TestLifecycleInvalidStatus() {
 	if err != nil {
 		if awsErr, ok := err.(awserr.Error); ok {
 
-			assert.Equal(awsErr.Code(), "MalformedXML")
-			assert.Equal(awsErr.Message(), "")
+			assert.Equal("MalformedXML", awsErr.Code())
+			assert.Equal("", awsErr.Message())
 		}
 	}
 
@@ -501,8 +501,8 @@ func (suite *S3Suite) TestLifecycleInvalidStatus() {
 	if err != nil {
 		if awsErr, ok := err.(awserr.Error); ok {
 
-			assert.Equal(awsErr.Code(), "MalformedXML")
-			assert.Equal(awsErr.Message(), "")
+			assert.Equal("MalformedXML", awsErr.Code())
+			assert.Equal("", awsErr.Message())
 		}
 	}
 }

@@ -152,7 +152,7 @@ func (suite *S3Suite) TestSignWithBodyReplaceRequestBody() {
 
 	_, err := s.Sign(req, seekerBody, "s3", "mexico", time.Now())
 	assert.Nil(err)
-	assert.NotEqual(req.Body, origBody)
+	assert.NotEqual(origBody, req.Body)
 	assert.NotNil(req.Body)
 }
 
@@ -172,7 +172,7 @@ func (suite *S3Suite) TestSignWithBodyNoReplaceRequestBody() {
 
 	_, err := s.Sign(req, seekerBody, "s3", "mexico", time.Now())
 	assert.Nil(err)
-	assert.Equal(req.Body, origBody)
+	assert.Equal(origBody, req.Body)
 }
 
 

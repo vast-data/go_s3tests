@@ -12,6 +12,6 @@ func TestLoadConfig (t *testing.T) {
 
 	assert := assert.New(t)
 
-	assert.Equal(LoadConfig(), nil)
+	assert.Nil(LoadConfig())
 }
 
