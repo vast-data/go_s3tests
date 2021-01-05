@@ -25,6 +25,7 @@ func LoadConfig() error {
 
 	viper.SetConfigType("yaml")
 	viper.AddConfigPath("../")
+	viper.AddConfigPath("./")
 	viper.SetConfigName("config")
 
   	err := viper.ReadInConfig() 
@@ -37,10 +38,6 @@ func LoadConfig() error {
 }
 
 var err = LoadConfig()
-
-const (
-	localCertFile = "/home/mu3e/Software/ceph-master/build/cert.pem"
-)
 
 var Creds = credentials.NewStaticCredentials(viper.GetString("s3main.access_key"), viper.GetString("s3main.access_secret"), "")
 
